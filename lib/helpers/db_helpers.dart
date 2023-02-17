@@ -9,7 +9,7 @@ class DBHelper {
       path.join(sqlPath, 'places.db'),
       onCreate: (db, version) {
         return db.execute(
-            'CREATE TABLE user_places(id TEXT PRIMARY KEY, title TEXT, image TEXT)');
+            'CREATE TABLE user_places(id TEXT PRIMARY KEY, title TEXT, image TEXT, latitude REAL, longitude REAL)');
       },
       version: 1,
     );
@@ -27,5 +27,10 @@ class DBHelper {
   static Future<List<Map<String, dynamic>>> getData(String table) async {
     final db = await DBHelper.database();
     return db.query(table);
+  }
+
+  static Future<void> deletePlace(String id) async {
+    final db = await DBHelper.database();
+    await db.delete('user_places', where: 'id = ?', whereArgs: [id]);
   }
 }

@@ -12,13 +12,13 @@ class PlacesProvider with ChangeNotifier {
     return [..._items];
   }
 
-  void addPlace(String title, File image) {
+  void addPlace(String title, File image, double lat, double lng) {
     Place newPlace = Place(
       id: DateTime.now().toIso8601String(),
       title: title,
       location: PlaceLocation(
-        latitude: 0.0,
-        longitude: 0.0,
+        latitude: lat,
+        longitude: lng,
         address: null,
       ),
       image: image,
@@ -28,6 +28,8 @@ class PlacesProvider with ChangeNotifier {
     DBHelper.insert('user_places', {
       'id': newPlace.id,
       'title': newPlace.title,
+      'latitude': newPlace.location.latitude,
+      'longitude': newPlace.location.longitude,
       'image': newPlace.image.path
     });
   }
@@ -39,13 +41,20 @@ class PlacesProvider with ChangeNotifier {
               id: place['id'],
               title: place['title'],
               location: PlaceLocation(
-                latitude: 0.0,
-                longitude: 0.0,
+                latitude: place['latitude'],
+                longitude: place['longitude'],
                 address: null,
               ),
               image: File(place['image']),
             ))
         .toList();
     notifyListeners();
+  }
+
+  void deletePlace(String id) {
+    final oldPlace = _items.firstWhere((element) => element.id == id);
+    _items.removeWhere((element) => element.id == id);
+    notifyListeners();
+    DBHelper.deletePlace(id);
   }
 }

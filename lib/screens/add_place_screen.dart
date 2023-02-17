@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:great_places_app/providers/places_provider.dart';
+import 'package:great_places_app/widgets/location_input.dart';
 import 'package:provider/provider.dart';
 
 import '../widgets/image_upload.dart';
@@ -22,18 +23,26 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
   // };
   String? _title;
   File? _image;
+  double? _lat;
+  double? _lng;
 
   void _pickImage(File img) {
     _image = img;
+  }
+
+  void _setLocation(double lat, double lng) {
+    _lat = lat;
+    _lng = lng;
   }
 
   void _saveForm() {
     if (!_formKey.currentState!.validate()) {
       return;
     }
+    if (_lat == null || _lng == null) return;
     _formKey.currentState!.save();
     Provider.of<PlacesProvider>(context, listen: false)
-        .addPlace(_title!, _image!);
+        .addPlace(_title!, _image!, _lat!, _lng!);
   }
 
   @override
@@ -60,7 +69,6 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
                             border: OutlineInputBorder(),
                           ),
                           validator: (value) {
-                            print(value);
                             if (value == null || value.isEmpty) {
                               return 'Enter title';
                             }
@@ -70,30 +78,32 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
                             _title = newValue;
                           },
                         ),
-                        const SizedBox(height: 20.0),
-                        TextFormField(
-                          decoration: const InputDecoration(
-                            label: Text('Longitude'),
-                            border: OutlineInputBorder(),
-                          ),
-                          validator: (value) {
-                            return null;
-                          },
-                          onSaved: (newValue) {},
-                        ),
-                        const SizedBox(height: 20.0),
-                        TextFormField(
-                          decoration: const InputDecoration(
-                            label: Text('Latitude'),
-                            border: OutlineInputBorder(),
-                          ),
-                          validator: (value) {
-                            return null;
-                          },
-                          onSaved: (newValue) {},
-                        ),
+                        // const SizedBox(height: 20.0),
+                        // TextFormField(
+                        //   decoration: const InputDecoration(
+                        //     label: Text('Longitude'),
+                        //     border: OutlineInputBorder(),
+                        //   ),
+                        //   validator: (value) {
+                        //     return null;
+                        //   },
+                        //   onSaved: (newValue) {},
+                        // ),
+                        // const SizedBox(height: 20.0),
+                        // TextFormField(
+                        //   decoration: const InputDecoration(
+                        //     label: Text('Latitude'),
+                        //     border: OutlineInputBorder(),
+                        //   ),
+                        //   validator: (value) {
+                        //     return null;
+                        //   },
+                        //   onSaved: (newValue) {},
+                        // ),
                         const SizedBox(height: 20.0),
                         ImageUpload(_pickImage),
+                        const SizedBox(height: 20.0),
+                        LocationInput(_setLocation),
                       ],
                     ),
                   ),

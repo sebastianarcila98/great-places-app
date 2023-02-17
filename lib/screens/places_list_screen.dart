@@ -36,6 +36,11 @@ class PlacesListScreen extends StatelessWidget {
                           ),
                           title: Text(places.items[i].title),
                           onTap: () {},
+                          trailing: IconButton(
+                              onPressed: () {
+                                places.deletePlace(places.items[i].id);
+                              },
+                              icon: const Icon(Icons.delete)),
                         ),
                       ),
                 child: const Center(child: Text('No places exist')),
